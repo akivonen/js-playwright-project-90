@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import LoginPage from './models/LoginPage';
-import { testUser1 } from './loginData';
+import LoginPage from '../models/LoginPage';
+import { testUser1 } from '../loginData';
 
 test('should render App loginPage properly', async ({ page }) => {
   const loginPage = new LoginPage(page);
