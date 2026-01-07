@@ -1,6 +1,6 @@
 import { UserCredentials } from './types';
 
-export const testUser1: UserCredentials = {
+export const validUserCredentials: UserCredentials = {
   username: 'username',
   password: 'password',
 };

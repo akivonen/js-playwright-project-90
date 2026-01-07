@@ -8,7 +8,7 @@ export default class BasePage {
     this.page = page;
   }
 
-  async goto(path?: string) {
+  async navigateTo(path?: string) {
     const url: string = path ? `${baseUrl}#/${path}` : baseUrl;
     await this.page.goto(url);
   }

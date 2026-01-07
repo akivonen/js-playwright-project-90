@@ -41,7 +41,7 @@ export default class UsersPage extends BasePage {
   }
 
   async openPage() {
-    await super.goto('users');
+    await super.navigateTo('users');
   }
 
   async createUser(newUser: CreateUserData) {

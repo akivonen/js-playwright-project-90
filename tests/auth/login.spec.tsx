@@ -1,36 +1,33 @@
 import { test, expect } from '@playwright/test';
 import LoginPage from '../models/LoginPage';
-import { testUser1 } from '../loginData';
+import { validUserCredentials } from '../loginData';
 
-test('should render App loginPage properly', async ({ page }) => {
-  const loginPage = new LoginPage(page);
+test.describe('Login functionality', () => {
+  let loginPage: LoginPage;
 
-  await loginPage.goto();
-  await expect(loginPage.usernameInput).toBeVisible();
-  await expect(loginPage.passwordInput).toBeVisible();
-  await expect(loginPage.signInButton).toBeVisible();
-});
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    await loginPage.navigateTo();
+  });
 
-test('should login properly and render dashboard', async ({ page }) => {
-  const loginPage = new LoginPage(page);
+  test('renders the login form on page load', async () => {
+    await expect(loginPage.usernameInput).toBeVisible();
+    await expect(loginPage.passwordInput).toBeVisible();
+    await expect(loginPage.loginButton).toBeVisible();
+  });
 
-  await loginPage.goto();
-  await loginPage.login(testUser1);
+  test('logs in successfully and displays dashboard', async () => {
+    await loginPage.login(validUserCredentials);
+    await expect(loginPage.dashboardWelcomeMessage).toBeVisible();
+  });
 
-  await expect(page.getByText('Welcome to the administration')).toBeVisible();
-});
+  test('logs out successfully and returns to login form', async () => {
+    await loginPage.login(validUserCredentials);
+    await loginPage.logout();
 
-test('should logout properly and render loginPage', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-
-  await loginPage.goto();
-  await loginPage.login(testUser1);
-  await loginPage.logout();
-
-  await expect(
-    page.getByText('Welcome to the administration')
-  ).not.toBeVisible();
-  await expect(loginPage.usernameInput).toBeVisible();
-  await expect(loginPage.passwordInput).toBeVisible();
-  await expect(loginPage.signInButton).toBeVisible();
+    await expect(loginPage.dashboardWelcomeMessage).not.toBeVisible();
+    await expect(loginPage.usernameInput).toBeVisible();
+    await expect(loginPage.passwordInput).toBeVisible();
+    await expect(loginPage.loginButton).toBeVisible();
+  });
 });
