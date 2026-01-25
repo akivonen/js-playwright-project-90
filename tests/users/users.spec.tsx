@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 import UsersPage from '../models/UsersPage';
-import { newUser1, editedUser1 } from '../usersTestData';
+import { newUser, editedUser } from '../fixtures/usersData';
 import LoginPage from '../models/LoginPage';
-import { validUserCredentials } from '../loginData';
-import { initUsersList } from '../initUsersList';
+import { validUserCredentials } from '../fixtures/authData';
+import { initUsersList } from '../fixtures/initUsersList';
 
 test.describe('Users Page tests', () => {
   let usersPage: UsersPage;
@@ -13,11 +13,11 @@ test.describe('Users Page tests', () => {
     await loginPage.navigateTo();
     await loginPage.login(validUserCredentials);
     usersPage = new UsersPage(page);
-    await usersPage.openPage();
+    await usersPage.navigateTo();
   });
 
-  test.describe('Creating new user', async () => {
-    test('renders usersPage and create user form properly', async () => {
+  test.describe('Creating new user', () => {
+    test('renders users page and create user form properly', async () => {
       await expect(usersPage.createButton).toBeVisible();
       await usersPage.createButton.click();
 
@@ -26,26 +26,26 @@ test.describe('Users Page tests', () => {
       await expect(usersPage.lastNameInput).toBeVisible();
     });
 
-    test('creates a new user and display created user details propely', async () => {
+    test('creates a new user and display created user details properly', async () => {
       await usersPage.createButton.click();
-      await usersPage.createUser(newUser1);
-      await expect(usersPage.showUserDetailsButton).toBeVisible();
+      await usersPage.createUser(newUser);
+      await expect(usersPage.showDetailsButton).toBeVisible();
 
-      await usersPage.showUserDetailsButton.click();
-      await usersPage.expectUserDetailsVisible(newUser1);
+      await usersPage.showDetailsButton.click();
+      await usersPage.expectUserDetailsVisible(newUser);
     });
   });
 
-  test.describe('Users list view', async () => {
+  test.describe('Users list view', () => {
     test('should render all cols in table properly', async () => {
-      await usersPage.expectUsersTableHeaderVisible();
+      await usersPage.expectTableHeaderVisible();
     });
     test('should render proper number of rows with main info', async () => {
       await usersPage.expectUsersMainInfoVisible(initUsersList);
     });
   });
 
-  test.describe('Editing existing user with correct data', async () => {
+  test.describe('Editing existing user with correct data', () => {
     test('displays user edit form properly', async () => {
       const existingUser = initUsersList[0];
       const existingUserRow = await usersPage.getRowByText(existingUser.email);
@@ -54,7 +54,7 @@ test.describe('Users Page tests', () => {
       await expect(usersPage.emailInput).toHaveValue(existingUser.email);
       await expect(usersPage.firstNameInput).toBeVisible();
       await expect(usersPage.firstNameInput).toHaveValue(
-        existingUser.firstName
+        existingUser.firstName,
       );
       await expect(usersPage.lastNameInput).toBeVisible();
       await expect(usersPage.lastNameInput).toHaveValue(existingUser.lastName);
@@ -65,18 +65,18 @@ test.describe('Users Page tests', () => {
       const existingUser = initUsersList[0];
       const existingUserRow = await usersPage.getRowByText(existingUser.email);
       await existingUserRow.click();
-      await usersPage.firstNameInput.fill(editedUser1.firstName);
-      await usersPage.lastNameInput.fill(editedUser1.lastName);
-      await usersPage.emailInput.fill(editedUser1.email);
+      await usersPage.firstNameInput.fill(editedUser.firstName);
+      await usersPage.lastNameInput.fill(editedUser.lastName);
+      await usersPage.emailInput.fill(editedUser.email);
       await usersPage.saveButton.click();
 
-      const editedUserRow = await usersPage.getRowByText(editedUser1.email);
+      const editedUserRow = await usersPage.getRowByText(editedUser.email);
       await expect(editedUserRow).toBeVisible();
-      await expect(editedUserRow).toContainText(editedUser1.firstName);
-      await expect(editedUserRow).toContainText(editedUser1.lastName);
+      await expect(editedUserRow).toContainText(editedUser.firstName);
+      await expect(editedUserRow).toContainText(editedUser.lastName);
     });
   });
-  test.describe('Editing existing user with incorrect data', async () => {
+  test.describe('Editing existing user with incorrect data', () => {
     test.beforeEach(async () => {
       const existingUser = initUsersList[1];
       const existingUserRow = await usersPage.getRowByText(existingUser.email);
@@ -86,7 +86,7 @@ test.describe('Users Page tests', () => {
       await usersPage.testFieldValidation(
         usersPage.emailInput,
         'notAnEmail',
-        'Incorrect email format'
+        'Incorrect email format',
       );
     });
     test('displays validation error on empty string input on fields', async () => {
@@ -99,7 +99,7 @@ test.describe('Users Page tests', () => {
       }
     });
   });
-  test.describe('Deleting user', async () => {
+  test.describe('Deleting user', () => {
     test('deletes multiple users from list', async () => {
       const usersToDelete = initUsersList.slice(0, 2);
       for (const user of usersToDelete) {
@@ -130,7 +130,7 @@ test.describe('Users Page tests', () => {
     });
 
     test('handles mass deletion of all users', async () => {
-      const selectAllCheckbox = usersPage.usersTable.getByLabel('Select all');
+      const selectAllCheckbox = usersPage.table.getByLabel('Select all');
       await selectAllCheckbox.click();
       for (const user of initUsersList) {
         const userRow = await usersPage.getRowByText(user.email);

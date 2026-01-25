@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import LoginPage from '../models/LoginPage';
-import { validUserCredentials } from '../loginData';
+import { validUserCredentials } from '../fixtures/authData';
 
 test.describe('Login functionality', () => {
   let loginPage: LoginPage;

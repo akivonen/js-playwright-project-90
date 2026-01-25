@@ -1,4 +1,4 @@
-import { UserCredentials } from './types';
+import { UserCredentials } from '../types';
 
 export const validUserCredentials: UserCredentials = {
   username: 'username',

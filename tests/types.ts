@@ -10,3 +10,10 @@ export type CreateUserData = {
 };
 
 export type User = CreateUserData & { id: number };
+
+export type CreateTaskStatusData = {
+  name: string;
+  slug: string;
+};
+
+export type TaskStatus = CreateTaskStatusData & { id: number };
